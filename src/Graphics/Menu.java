@@ -76,6 +76,7 @@ public class Menu extends Application {
 
         primaryStage.setScene(makeScene("Menu"));
 
+
         primaryStage.show();
     }
 }
