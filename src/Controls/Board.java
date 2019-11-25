@@ -5,7 +5,6 @@ import Enums.UnitType;
 import Exeptions.NoValidMoveException;
 import Players.AI;
 import IO.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -91,7 +90,7 @@ public class Board {
                 usefulCoordinates.add(c);
     }
 
-    public void makeMove(@NotNull Move move) {
+    public void makeMove( Move move) {
 
         moves.add(move);
 
@@ -113,7 +112,7 @@ public class Board {
                 getField(c).setContent(getField(center).getContent());
     }
 
-    public ArrayList<Coordinate> getFieldCoordinatesInRange(@NotNull Coordinate center, int range) {
+    public ArrayList<Coordinate> getFieldCoordinatesInRange( Coordinate center, int range) {
 
         ArrayList<Coordinate> fields = new ArrayList<>();
 
@@ -140,18 +139,18 @@ public class Board {
         return fields;
     }
 
-    public void selectEmptyFields(@NotNull ArrayList<Coordinate> fields){
+    public void selectEmptyFields( ArrayList<Coordinate> fields){
 
         fields.removeIf((f) -> !getField(f).getContent().isEmpty());
     }
 
-    public void selectEnemyFields(@NotNull ArrayList<Coordinate> fields) {
+    public void selectEnemyFields( ArrayList<Coordinate> fields) {
 
         UnitType enemy = getPreviousPlayer();
         fields.removeIf((f) -> !getField(f).getContent().equals(enemy));
     }
 
-    public Field getField(@NotNull Coordinate coordinate){
+    public Field getField( Coordinate coordinate){
 
         return GameBoard[coordinate.y][coordinate.x];
     }
@@ -199,7 +198,7 @@ public class Board {
     }
 
     @Override
-    public boolean equals(@NotNull Object o){
+    public boolean equals( Object o){
 
         for(int i = 0; i < this.coordinates.size(); i++) {
 

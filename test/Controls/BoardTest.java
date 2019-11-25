@@ -86,6 +86,4 @@ class BoardTests {
 
         assertEquals(UnitType.BLUE, testBoard.getPreviousPlayer());
     }
-
-
 }

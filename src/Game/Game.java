@@ -6,7 +6,6 @@ import Exeptions.GameEndedException;
 import Exeptions.NoValidMoveException;
 import Players.*;
 import Players.AI;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 
@@ -15,7 +14,7 @@ public class Game {
     public Board GameBoard;
     private ArrayList<Player> players;
 
-    public Game(@NotNull Board GameBoard) {
+    public Game( Board GameBoard) {
 
             this.GameBoard = new Board(GameBoard);
             players = new ArrayList<>(2);

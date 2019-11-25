@@ -1,26 +1,25 @@
 package Controls;
 
 import Enums.UnitType;
-import org.jetbrains.annotations.NotNull;
 
 public class Field {
 
     private final Coordinate position;
     public UnitType content;
 
-    public Field(@NotNull Coordinate position) {
+    public Field( Coordinate position) {
 
         this.position = position;
         content = UnitType.EMPTY;
     }
 
-    public Field(@NotNull Coordinate position, @NotNull UnitType content) {
+    public Field( Coordinate position,  UnitType content) {
 
         this.position = position;
         setContent(content);
     }
 
-    void setContent(@NotNull UnitType content){
+    void setContent( UnitType content){
 
         this.content = content;
     }
@@ -41,7 +40,7 @@ public class Field {
     }
 
     @Override
-    public boolean equals(@NotNull Object o){
+    public boolean equals( Object o){
 
         return getValue() == ((Field)o).getValue() && content.equals(((Field)o).content);
     }

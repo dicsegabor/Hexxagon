@@ -1,7 +1,6 @@
 package Controls;
 
 import Enums.MoveType;
-import org.jetbrains.annotations.NotNull;
 
 public class Move {
 
@@ -10,14 +9,14 @@ public class Move {
     public final MoveType type;
     public int value;
 
-    public Move(@NotNull Coordinate from, @NotNull Coordinate to){
+    public Move( Coordinate from,  Coordinate to){
 
         this.from = from;
         this.to = to;
         type = from.getDistance(to);
     }
 
-    public Boolean sameResult(@NotNull Move move){
+    public Boolean sameResult( Move move){
 
         return to.equals(move.to) && type.equals(MoveType.SHORT);
     }
