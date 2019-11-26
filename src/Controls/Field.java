@@ -9,12 +9,6 @@ public class Field  implements Serializable {
     private final Coordinate position;
     public UnitType content;
 
-    public Field( Coordinate position) {
-
-        this.position = position;
-        content = UnitType.EMPTY;
-    }
-
     public Field( Coordinate position,  UnitType content) {
 
         this.position = position;

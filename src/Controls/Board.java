@@ -3,6 +3,7 @@ package Controls;
 import Enums.*;
 import Exeptions.NoValidMoveException;
 import Players.AI;
+import IO.Reader;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -17,7 +18,20 @@ public class Board implements Serializable {
     private Field[][] GameBoard = new Field[HEIGHT][WIDTH];
     public final ArrayList<Coordinate> usefulCoordinates = new ArrayList<>();
 
-    public Board(String fileName){}
+    public Board(String fileName){
+
+        generateCoordinates();
+
+        Reader r = new Reader(fileName);
+        String[] layout = r.getBoardLayout();
+
+        int si = 0;
+        for(Coordinate c : coordinates)
+            GameBoard[c.y][c.x] = new Field(c, UnitType.parseUnitType(layout[si++]));
+
+        getUsefulCoordinates();
+        setOriginalBoard();
+    }
 
     public Board(Board board){
 
@@ -114,7 +128,7 @@ public class Board implements Serializable {
         fields.removeIf((f) -> !getField(f).getContent().isEmpty());
     }
 
-    private void selectEnemyFields( ArrayList<Coordinate> fields) {
+    public void selectEnemyFields( ArrayList<Coordinate> fields) {
 
         UnitType enemy = getPreviousPlayer();
         fields.removeIf((f) -> !getField(f).getContent().equals(enemy.getOpposite()));
@@ -134,7 +148,6 @@ public class Board implements Serializable {
                 if(95 + j * 178 > x && 21 + i * 118.5 > y)
                    c = new Coordinate(j - 1, i - 1);
 
-        assert c != null;
         return getField(c);
     }
 
@@ -183,27 +196,22 @@ public class Board implements Serializable {
     @Override
     public boolean equals( Object o){
 
-        if(o.getClass().equals(Board.class)) {
+        for (int i = 0; i < this.coordinates.size(); i++) {
 
-            for (int i = 0; i < this.coordinates.size(); i++) {
+            Field thisField = getField(coordinates.get(i));
+            Field bField = ((Board) o).getField(((Board) o).coordinates.get(i));
 
-                Field thisField = getField(coordinates.get(i));
-                Field bField = ((Board) o).getField(((Board) o).coordinates.get(i));
-
-                if (!thisField.equals(bField))
-                    return false;
-            }
-
-            return true;
+            if (!thisField.equals(bField))
+                return false;
         }
 
-        return false;
+        return true;
     }
 
     @Override
     public String toString() {
 
-        StringBuilder board = new StringBuilder();
+        String board = "";
 
         for(int y = 0; y < HEIGHT; y++) {
 
@@ -215,30 +223,30 @@ public class Board implements Serializable {
                     switch (getField(c).getContent()) {
 
                         case BLUE:
-                            board.append("|B|");
+                            board += "|B|";
                             break;
 
                         case RED:
-                            board.append("|R|");
+                            board += "|R|";
                             break;
 
                         case EMPTY:
-                            board.append("| |");
+                            board += "| |";
                             break;
 
                         case HOLE:
-                            board.append("|O|");
+                            board += "|O|";
                             break;
                     }
 
                 else
-                    board.append("   ");
+                    board += "   ";
             }
 
-            board.append("\n");
+            board += "\n";
         }
 
-        return board.toString();
+        return board;
     }
 
     public void listMoves(){

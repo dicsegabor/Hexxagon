@@ -1,6 +1,11 @@
 package Graphics;
 
+import Controls.Board;
+import Controls.Converter;
+import Controls.Coordinate;
+import IO.BoardIOHandler;
 import javafx.application.Application;
+import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -23,6 +28,7 @@ public class Main extends Application {
 
     private Rectangle2D primaryScreenBounds = Screen.getPrimary().getBounds();
     private double widthRatio, heightRatio, backgroundX, backgroundY;
+    private Board board = BoardIOHandler.load("defaultBoard");
 
     private ImageView loadBackGround(String fileName) throws FileNotFoundException {
 
@@ -72,19 +78,19 @@ public class Main extends Application {
         return bt;
     }
 
-    private void placeButton(Button button, double x, double y){
+    private void placeButton(Button button, Point2D place){
 
-        button.setLayoutX(backgroundX + x * widthRatio);
-        button.setLayoutY(backgroundY + y * heightRatio);
+        button.setLayoutX(backgroundX + place.getX() * widthRatio);
+        button.setLayoutY(backgroundY + place.getY() * heightRatio);
     }
 
-    private Button makeButton(String fileName, double x, double y){
+    private Button makeButton(String fileName, Point2D place){
 
         Button bt = null;
 
         try { bt = imageToButton(fileName); } catch (FileNotFoundException e) { System.out.println("File not found!"); }
 
-        placeButton(bt, x, y);
+        placeButton(bt, place);
 
         return bt;
     }
@@ -93,8 +99,9 @@ public class Main extends Application {
 
         ArrayList<Node> elements = new ArrayList<>();
         elements.add(loadBackGround("Game"));
-        elements.add(makeButton("Menu Button", 76, 967));
-        elements.add(makeButton("Blue", 808, 21));
+        elements.add(makeButton("Menu Button", new Point2D(76, 967)));
+        for(Coordinate c : board.usefulCoordinates)
+            elements.add(makeButton("Red", Converter.coordinateToPoint(c)));
         Group root = new Group(elements);
 
         return new Scene(root, primaryScreenBounds.getMinX(), primaryScreenBounds.getMinY(), Color.WHITE);

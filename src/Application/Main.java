@@ -9,7 +9,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Board defaultBoard = BoardIOHandler.load("defaultBoard");
+        Board defaultBoard = new Board("defaultBoard");
+        BoardIOHandler.save(defaultBoard, "defaultBoard");
+        BoardIOHandler.save(defaultBoard, "defaultTestBoard");
+        defaultBoard = new Board("emptyBoard");
+        BoardIOHandler.save(defaultBoard, "emptyBoard");
 
         Game game = new Game(defaultBoard);
         game.addAI(UnitType.RED, 1);
