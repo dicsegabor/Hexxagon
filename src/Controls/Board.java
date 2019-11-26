@@ -4,11 +4,11 @@ import Enums.MoveType;
 import Enums.UnitType;
 import Exeptions.NoValidMoveException;
 import Players.AI;
-import IO.*;
 
+import java.io.*;
 import java.util.ArrayList;
 
-public class Board {
+public class Board implements Serializable {
 
     private final int WIDTH = 9, HEIGHT = 17;
     private final ArrayList<Coordinate> coordinates = new ArrayList<>();
@@ -18,20 +18,7 @@ public class Board {
     private Field[][] GameBoard = new Field[HEIGHT][WIDTH];
     public final ArrayList<Coordinate> usefulCoordinates = new ArrayList<>();
 
-    public Board(String fileName){
-
-        generateCoordinates();
-
-        Reader r = new Reader(fileName);
-        String[] boardLayout = r.getBoardLayout();
-
-        int si = 0;
-        for(Coordinate c : coordinates)
-            GameBoard[c.y][c.x] = new Field(c, UnitType.parseUnitType(boardLayout[si++]));
-
-        getUsefulCoordinates();
-        setOriginalBoard();
-    }
+    public Board(String fileName){}
 
     public Board(Board board){
 
@@ -39,21 +26,6 @@ public class Board {
         setGameBoard(board);
         getUsefulCoordinates();
         setOriginalBoard();
-    }
-
-    public void saveBoard(String name){
-
-        Writer w = new Writer(name);
-        StringBuilder line;
-
-        for(int y = 0; y < HEIGHT; y++){
-
-            line = new StringBuilder();
-            for(int x = 0; x < WIDTH; x++)
-            line.append(GameBoard[y][x].getContent()).append(" ");
-
-            w.insertLine(line.toString());
-        }
     }
 
     public void resetBoard(){
@@ -108,8 +80,7 @@ public class Board {
         selectEnemyFields(adjacentFields);
 
         for(Coordinate c : adjacentFields)
-            if (getField(c).getContent().equals(getField(center).getContent().getOpposite()))
-                getField(c).setContent(getField(center).getContent());
+            getField(c).setContent(getField(center).getContent());
     }
 
     public ArrayList<Coordinate> getFieldCoordinatesInRange( Coordinate center, int range) {
@@ -147,7 +118,7 @@ public class Board {
     public void selectEnemyFields( ArrayList<Coordinate> fields) {
 
         UnitType enemy = getPreviousPlayer();
-        fields.removeIf((f) -> !getField(f).getContent().equals(enemy));
+        fields.removeIf((f) -> !getField(f).getContent().equals(enemy.getOpposite()));
     }
 
     public Field getField( Coordinate coordinate){

@@ -4,6 +4,7 @@ import Enums.MoveType;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CoordinateTest {
 
@@ -20,6 +21,5 @@ public class CoordinateTest {
         assertEquals(MoveType.LONG, middle.getDistance(new Coordinate(3, 5)));
         assertEquals(MoveType.LONG, middle.getDistance(new Coordinate(4, 4)));
         assertEquals(MoveType.INVALID, middle.getDistance(new Coordinate(4, 0)));
-
     }
 }

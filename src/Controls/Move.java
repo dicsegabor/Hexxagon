@@ -2,7 +2,9 @@ package Controls;
 
 import Enums.MoveType;
 
-public class Move {
+import java.io.Serializable;
+
+public class Move  implements Serializable {
 
     public final Coordinate from;
     public final Coordinate to;

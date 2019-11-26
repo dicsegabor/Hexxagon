@@ -2,29 +2,29 @@ package Controls;
 
 import Enums.UnitType;
 
-import org.junit.Before;
+import IO.BoardIOHandler;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
 
 class BoardTests {
 
     private Board testBoard, emptyBoard;
     private Move testMove;
 
-    @Before
+    @BeforeEach
     public void setup(){
 
-        testBoard = new Board("defaultTestBoard");
-        emptyBoard = new Board("emptyBoard");
+        testBoard = BoardIOHandler.load("defaultTestBoard");
+        emptyBoard = BoardIOHandler.load("emptyBoard");
         testMove = new Move(new Coordinate(4, 16), new Coordinate(4, 14));
     }
 
     @Test
     public void IOTest(){
 
-        testBoard.saveBoard("testBoard_1");
-        Board testedBoard = new Board("testBoard_1");
+        BoardIOHandler.save(testBoard, "testBoard_1");
+        Board testedBoard = BoardIOHandler.load("testBoard_1");
         assertEquals(testBoard, testedBoard);
     }
 

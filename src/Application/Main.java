@@ -3,14 +3,15 @@ package Application;
 import Enums.UnitType;
 import Game.*;
 import Controls.*;
+import IO.BoardIOHandler;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        Board b = new Board("defaultBoard");
+        Board defaultBoard = BoardIOHandler.load("defaultBoard");
 
-        Game game = new Game(b);
+        Game game = new Game(defaultBoard);
         game.addAI(UnitType.RED, 1);
         game.addAI(UnitType.BLUE, 1);
 

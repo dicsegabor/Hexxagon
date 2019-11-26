@@ -2,7 +2,9 @@ package Controls;
 
 import Enums.UnitType;
 
-public class Field {
+import java.io.Serializable;
+
+public class Field  implements Serializable {
 
     private final Coordinate position;
     public UnitType content;
