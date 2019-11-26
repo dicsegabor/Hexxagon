@@ -1,6 +1,6 @@
 package Controls;
 
-import  java.util.Comparator;
+import java.util.Comparator;
 
 public class MoveValueComparator implements Comparator<Move>{
 

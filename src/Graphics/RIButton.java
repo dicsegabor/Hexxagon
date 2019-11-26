@@ -2,15 +2,16 @@ package Graphics;
 
 import javafx.geometry.Point2D;
 
-import java.awt.*;
+import javafx.scene.control.Button;
 
-public class RIButton extends Button {
+public class RIButton {
 
-    private Point2D originalPosition;
+    public Point2D originalPosition;
+    public Button button;
 
-    public RIButton(double x, double y){
+    public RIButton(Button button, Point2D point){
 
-        super();
-        originalPosition = new Point2D(x, y);
+        this.button = button;
+        originalPosition = point;
     }
 }

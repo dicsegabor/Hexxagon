@@ -5,6 +5,8 @@ import Controls.Converter;
 import Controls.Coordinate;
 import IO.BoardIOHandler;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -78,33 +80,39 @@ public class Main extends Application {
         return bt;
     }
 
-    private void placeButton(Button button, Point2D place){
+    private void placeButton(RIButton riButton){
 
-        button.setLayoutX(backgroundX + place.getX() * widthRatio);
-        button.setLayoutY(backgroundY + place.getY() * heightRatio);
+        riButton.button.setLayoutX(backgroundX + riButton.originalPosition.getX() * widthRatio);
+        riButton.button.setLayoutY(backgroundY + riButton.originalPosition.getY() * heightRatio);
     }
 
-    private Button makeButton(String fileName, Point2D place){
+    private RIButton makeButton(String fileName, Point2D place){
 
-        Button bt = null;
+        RIButton riButton = null;
+        try { riButton = new RIButton(imageToButton(fileName), place); }
+        catch (FileNotFoundException e) { System.out.println("File not found!"); }
 
-        try { bt = imageToButton(fileName); } catch (FileNotFoundException e) { System.out.println("File not found!"); }
+        placeButton(riButton);
 
-        placeButton(bt, place);
-
-        return bt;
+        return riButton;
     }
 
     private Scene makeScene(String fileName) throws FileNotFoundException {
 
         ArrayList<Node> elements = new ArrayList<>();
-        elements.add(loadBackGround("Game"));
-        elements.add(makeButton("Menu Button", new Point2D(76, 967)));
-        for(Coordinate c : board.usefulCoordinates)
-            elements.add(makeButton("Red", Converter.coordinateToPoint(c)));
-        Group root = new Group(elements);
+        elements.add(loadBackGround(fileName));
 
-        return new Scene(root, primaryScreenBounds.getMinX(), primaryScreenBounds.getMinY(), Color.WHITE);
+        ArrayList<RIButton> buttons = new ArrayList<>();
+
+        buttons.add(makeButton("Menu Button", new Point2D(76, 967)));
+        for(Coordinate c : board.usefulCoordinates)
+            buttons.add(makeButton("Hole", Converter.coordinateToPointForHole(c)));
+
+        for(RIButton ribt : buttons)
+            elements.add(ribt.button);
+
+        Group root = new Group(elements);
+        return new Scene(root, primaryScreenBounds.getMinX(), primaryScreenBounds.getMinY(), Color.BLACK);
     }
 
     private void setExitKey(Stage primaryStage, KeyCode key){

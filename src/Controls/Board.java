@@ -1,11 +1,13 @@
 package Controls;
 
-import Enums.*;
+import Enums.MoveType;
+import Enums.UnitType;
 import Exeptions.NoValidMoveException;
-import Players.AI;
+import IO.BoardIOHandler;
 import IO.Reader;
+import Players.AI;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Board implements Serializable {
@@ -39,6 +41,15 @@ public class Board implements Serializable {
         setGameBoard(board);
         getUsefulCoordinates();
         setOriginalBoard();
+    }
+
+    public static void refreshBoards(){
+
+        Board defaultBoard = new Board("defaultBoard");
+        BoardIOHandler.save(defaultBoard, "defaultBoard");
+        BoardIOHandler.save(defaultBoard, "defaultTestBoard");
+        defaultBoard = new Board("emptyBoard");
+        BoardIOHandler.save(defaultBoard, "emptyBoard");
     }
 
     public void resetBoard(){
@@ -137,18 +148,6 @@ public class Board implements Serializable {
     public Field getField( Coordinate coordinate){
 
         return GameBoard[coordinate.y][coordinate.x];
-    }
-
-    public Field getField(double x, double y){
-
-        Coordinate c = null;
-
-        for(int i = 0; i < HEIGHT; i++)
-            for(int j = 0; j < WIDTH; j++)
-                if(95 + j * 178 > x && 21 + i * 118.5 > y)
-                   c = new Coordinate(j - 1, i - 1);
-
-        return getField(c);
     }
 
     public UnitType getPreviousPlayer() {

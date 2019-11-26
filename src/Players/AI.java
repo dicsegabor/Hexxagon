@@ -1,6 +1,9 @@
 package Players;
 
-import Controls.*;
+import Controls.Board;
+import Controls.Coordinate;
+import Controls.Move;
+import Controls.MoveValueComparator;
 import Enums.UnitType;
 import Exeptions.NoValidMoveException;
 import org.jetbrains.annotations.NotNull;

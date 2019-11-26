@@ -1,11 +1,12 @@
 package Game;
 
-import Controls.*;
+import Controls.Board;
 import Enums.UnitType;
 import Exeptions.GameEndedException;
 import Exeptions.NoValidMoveException;
-import Players.*;
 import Players.AI;
+import Players.Human;
+import Players.Player;
 
 import java.util.ArrayList;
 

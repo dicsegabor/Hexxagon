@@ -1,19 +1,16 @@
 package Application;
 
+import Controls.Board;
 import Enums.UnitType;
-import Game.*;
-import Controls.*;
+import Game.Game;
 import IO.BoardIOHandler;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        Board defaultBoard = new Board("defaultBoard");
-        BoardIOHandler.save(defaultBoard, "defaultBoard");
-        BoardIOHandler.save(defaultBoard, "defaultTestBoard");
-        defaultBoard = new Board("emptyBoard");
-        BoardIOHandler.save(defaultBoard, "emptyBoard");
+        Board.refreshBoards();
+        Board defaultBoard = BoardIOHandler.load("defaultBoard");
 
         Game game = new Game(defaultBoard);
         game.addAI(UnitType.RED, 1);

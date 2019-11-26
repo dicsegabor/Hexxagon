@@ -1,6 +1,7 @@
 package Players;
 
-import Controls.*;
+import Controls.Board;
+import Controls.Move;
 import Enums.UnitType;
 
 public class Human implements Player{
