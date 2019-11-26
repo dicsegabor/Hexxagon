@@ -10,10 +10,9 @@ public class Converter {
 
         for(int i = 0; i < 17; i++)
             for(int j = 0; j < 9; j++)
-                if(95 + j * 178 > x && 21 + i * 59.5 > y)
-                    c = new Coordinate(j - 1, i - 1);
+                if(((95 + j * 178) < x && (198 + j * 178) > x) && ((21 + i * 59.5) < y && (102 + i * 59.5) > y))
+                    c = new Coordinate(j, i);
 
-        assert c != null;
         return c;
     }
 

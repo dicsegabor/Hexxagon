@@ -1,40 +1,29 @@
 package Graphics;
 
-import Controls.Board;
-import Controls.Converter;
-import Controls.Coordinate;
-import IO.BoardIOHandler;
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 
-public class Main extends Application {
+public class GUIMaker {
 
-    private Rectangle2D primaryScreenBounds = Screen.getPrimary().getBounds();
+    public Rectangle2D primaryScreenBounds = Screen.getPrimary().getBounds();
     private double widthRatio, heightRatio, backgroundX, backgroundY;
-    private Board board = BoardIOHandler.load("defaultBoard");
 
-    private ImageView loadBackGround(String fileName) throws FileNotFoundException {
+    public ImageView loadBackGround(String fileName){
 
-        Image image = new Image(new FileInputStream("Graphics\\1920x1080\\" + fileName + ".png"));
+        Image image = null;
+        try { image = new Image(new FileInputStream("Graphics\\1920x1080\\" + fileName + ".png")); }
+        catch (FileNotFoundException e) { System.out.println("File not found!");}
         ImageView imageView = new ImageView(image);
 
         imageView.setFitHeight(primaryScreenBounds.getHeight());
@@ -86,7 +75,7 @@ public class Main extends Application {
         riButton.button.setLayoutY(backgroundY + riButton.originalPosition.getY() * heightRatio);
     }
 
-    private RIButton makeButton(String fileName, Point2D place){
+    public RIButton makeButton(String fileName, Point2D place){
 
         RIButton riButton = null;
         try { riButton = new RIButton(imageToButton(fileName), place); }
@@ -97,41 +86,12 @@ public class Main extends Application {
         return riButton;
     }
 
-    private Scene makeScene(String fileName) throws FileNotFoundException {
+    public void setExitKey(Stage primaryStage, KeyCode key){
 
-        ArrayList<Node> elements = new ArrayList<>();
-        elements.add(loadBackGround(fileName));
-
-        ArrayList<RIButton> buttons = new ArrayList<>();
-
-        buttons.add(makeButton("Menu Button", new Point2D(76, 967)));
-        for(Coordinate c : board.usefulCoordinates)
-            buttons.add(makeButton("Hole", Converter.coordinateToPointForHole(c)));
-
-        for(RIButton ribt : buttons)
-            elements.add(ribt.button);
-
-        Group root = new Group(elements);
-        return new Scene(root, primaryScreenBounds.getMinX(), primaryScreenBounds.getMinY(), Color.BLACK);
-    }
-
-    private void setExitKey(Stage primaryStage, KeyCode key){
-
-        primaryStage.addEventHandler(KeyEvent.KEY_RELEASED, (KeyEvent event) -> {
+        primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
 
             if (key == event.getCode())
                 primaryStage.close();
         });
-    }
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-
-        setExitKey(primaryStage, KeyCode.ESCAPE);
-        primaryStage.setFullScreen(true);
-
-        primaryStage.setScene(makeScene("Game"));
-
-        primaryStage.show();
     }
 }
