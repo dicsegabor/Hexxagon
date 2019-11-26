@@ -1,7 +1,6 @@
 package Controls;
 
-import Enums.MoveType;
-import Enums.UnitType;
+import Enums.*;
 import Exeptions.NoValidMoveException;
 import Players.AI;
 
@@ -115,7 +114,7 @@ public class Board implements Serializable {
         fields.removeIf((f) -> !getField(f).getContent().isEmpty());
     }
 
-    public void selectEnemyFields( ArrayList<Coordinate> fields) {
+    private void selectEnemyFields( ArrayList<Coordinate> fields) {
 
         UnitType enemy = getPreviousPlayer();
         fields.removeIf((f) -> !getField(f).getContent().equals(enemy.getOpposite()));
@@ -124,6 +123,19 @@ public class Board implements Serializable {
     public Field getField( Coordinate coordinate){
 
         return GameBoard[coordinate.y][coordinate.x];
+    }
+
+    public Field getField(double x, double y){
+
+        Coordinate c = null;
+
+        for(int i = 0; i < HEIGHT; i++)
+            for(int j = 0; j < WIDTH; j++)
+                if(95 + j * 178 > x && 21 + i * 118.5 > y)
+                   c = new Coordinate(j - 1, i - 1);
+
+        assert c != null;
+        return getField(c);
     }
 
     public UnitType getPreviousPlayer() {
@@ -171,22 +183,27 @@ public class Board implements Serializable {
     @Override
     public boolean equals( Object o){
 
-        for(int i = 0; i < this.coordinates.size(); i++) {
+        if(o.getClass().equals(Board.class)) {
 
-            Field thisField = getField(coordinates.get(i));
-            Field bField = ((Board)o).getField(((Board)o).coordinates.get(i));
+            for (int i = 0; i < this.coordinates.size(); i++) {
 
-            if (!thisField.equals(bField))
-                return false;
+                Field thisField = getField(coordinates.get(i));
+                Field bField = ((Board) o).getField(((Board) o).coordinates.get(i));
+
+                if (!thisField.equals(bField))
+                    return false;
+            }
+
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     @Override
     public String toString() {
 
-        String board = "";
+        StringBuilder board = new StringBuilder();
 
         for(int y = 0; y < HEIGHT; y++) {
 
@@ -198,30 +215,30 @@ public class Board implements Serializable {
                     switch (getField(c).getContent()) {
 
                         case BLUE:
-                            board += "|B|";
+                            board.append("|B|");
                             break;
 
                         case RED:
-                            board += "|R|";
+                            board.append("|R|");
                             break;
 
                         case EMPTY:
-                            board += "| |";
+                            board.append("| |");
                             break;
 
                         case HOLE:
-                            board += "|O|";
+                            board.append("|O|");
                             break;
                     }
 
                 else
-                    board += "   ";
+                    board.append("   ");
             }
 
-            board += "\n";
+            board.append("\n");
         }
 
-        return board;
+        return board.toString();
     }
 
     public void listMoves(){
