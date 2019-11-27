@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class Board implements Serializable {
 
     private final int WIDTH = 9, HEIGHT = 17;
-    private final ArrayList<Coordinate> coordinates = new ArrayList<>();
+    public final ArrayList<Coordinate> coordinates = new ArrayList<>();
     private final Field[][] OriginalBoard = new Field[HEIGHT][WIDTH];
 
     private ArrayList<Move> moves = new ArrayList<>();
@@ -100,16 +100,20 @@ public class Board implements Serializable {
 
     private void conquerAdjacentFields(Coordinate center){
 
-        ArrayList<Coordinate> adjacentFields = getFieldCoordinatesInRange(center, 1);
+        ArrayList<Coordinate> adjacentFields = getFieldCoordinatesInRange(center, MoveType.SHORT);
         selectEnemyFields(adjacentFields);
 
         for(Coordinate c : adjacentFields)
             getField(c).setContent(getField(center).getContent());
     }
 
-    public ArrayList<Coordinate> getFieldCoordinatesInRange( Coordinate center, int range) {
+    public ArrayList<Coordinate> getFieldCoordinatesInRange( Coordinate center, MoveType moveType) {
 
         ArrayList<Coordinate> fields = new ArrayList<>();
+
+        int range;
+        if (moveType.equals(MoveType.SHORT)) range = 1;
+        else range = 2;
 
         int lowerY = center.y - 2 * range;
         if(lowerY < 0) lowerY = 0;
@@ -128,7 +132,38 @@ public class Board implements Serializable {
 
         for(Coordinate c : coordinates)
             if(c.isBetween(leftUpper, rightLower))
-                if(getField(c).getContent().isUsable())
+                if(getField(c).getContent().isUsable() && center.getDistance(c).equals(moveType))
+                    fields.add(c);
+
+        return fields;
+    }
+
+    public ArrayList<Coordinate> getFieldCoordinatesInRange( Coordinate center, MoveType moveType, UnitType content) {
+
+        ArrayList<Coordinate> fields = new ArrayList<>();
+
+        int range;
+        if (moveType.equals(MoveType.SHORT)) range = 1;
+        else range = 2;
+
+        int lowerY = center.y - 2 * range;
+        if(lowerY < 0) lowerY = 0;
+
+        int higherY = center.y + 2 * range;
+        if (higherY > HEIGHT - 1) higherY = HEIGHT;
+
+        int lowerX = center.x - range;
+        if(lowerX < 0) lowerX = 0;
+
+        int higherX = center.x + range;
+        if (higherX > WIDTH - 1) higherX = WIDTH;
+
+        Coordinate leftUpper = new Coordinate(lowerX, higherY);
+        Coordinate rightLower = new Coordinate(higherX, lowerY);
+
+        for(Coordinate c : coordinates)
+            if(c.isBetween(leftUpper, rightLower))
+                if(getField(c).getContent().equals(content) && center.getDistance(c).equals(moveType))
                     fields.add(c);
 
         return fields;
@@ -162,8 +197,8 @@ public class Board implements Serializable {
 
         Board testBoard = new Board(this);
 
-        AI tester = new AI(getPreviousPlayer().getOpposite(), testBoard, 1);
-        try{ tester.thinkOutMove(); }
+        AI tester = new AI(getPreviousPlayer().getOpposite(), 1);
+        try{ tester.thinkOutMove(testBoard); }
         catch (NoValidMoveException e) { return true; }
 
         return false;

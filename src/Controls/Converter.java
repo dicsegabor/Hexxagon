@@ -24,7 +24,7 @@ public class Converter {
         return new Point2D(x, y);
     }
 
-    public static Point2D coordinateToPointForHole(Coordinate c){
+    public static Point2D coordinateToPointForField(Coordinate c){
 
         double x = 49 + c.x * 178;
         double y = 16 + c.y * 59.5;

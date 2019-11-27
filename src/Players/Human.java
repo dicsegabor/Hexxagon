@@ -9,14 +9,14 @@ public class Human implements Player{
     public UnitType team;
     private Board GameBoard;
 
-    public Human(UnitType team, Board GameBoard) {
+    public Human(UnitType team) {
 
         this.team = team;
-        this.GameBoard = GameBoard;
     }
 
-    public Move thinkOutMove(){
+    public Move thinkOutMove(Board board){
 
+        GameBoard = board;
         return null;
     }
 

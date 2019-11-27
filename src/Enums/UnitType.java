@@ -19,6 +19,8 @@ public enum UnitType {
         return this.equals(EMPTY);
     }
 
+    public Boolean hasGraphic() {return !(this.equals(SPACE) || this.equals(EMPTY)); }
+
     public Boolean isUsable() { return !(this.equals(HOLE) || this.equals(SPACE)); }
 
     public static UnitType parseUnitType(String s){

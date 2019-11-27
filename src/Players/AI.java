@@ -4,6 +4,7 @@ import Controls.Board;
 import Controls.Coordinate;
 import Controls.Move;
 import Controls.MoveValueComparator;
+import Enums.MoveType;
 import Enums.UnitType;
 import Exeptions.NoValidMoveException;
 import org.jetbrains.annotations.NotNull;
@@ -16,16 +17,17 @@ public class AI implements Player{
 
     private final UnitType team;
     private Board calculatorBoard;
-    private final int deepness;
+    private final int level;
 
-    public AI(UnitType team, Board GameBoard, int deepness){
+    public AI(UnitType team, int deepness){
 
         this.team = team;
-        this.calculatorBoard = GameBoard;
-        this.deepness = deepness;
+        this.level = deepness;
     }
 
-    public Move thinkOutMove() throws NoValidMoveException {
+    public Move thinkOutMove(Board board) throws NoValidMoveException {
+
+        calculatorBoard = new Board(board);
 
         ArrayList<Move> moves;
 
@@ -47,7 +49,8 @@ public class AI implements Player{
 
         for(Coordinate source : sources) {
 
-            ArrayList<Coordinate> possibleFields = calculatorBoard.getFieldCoordinatesInRange(source, 2);
+            ArrayList<Coordinate> possibleFields = calculatorBoard.getFieldCoordinatesInRange(source, MoveType.SHORT);
+            possibleFields.addAll(calculatorBoard.getFieldCoordinatesInRange(source, MoveType.LONG));
             calculatorBoard.selectEmptyFields(possibleFields);
 
             for (Coordinate target : possibleFields) {
@@ -79,14 +82,14 @@ public class AI implements Player{
         return sources;
     }
 
-    private Move getRandomMove(@NotNull ArrayList<Move> moves){
+    private Move getRandomMove(ArrayList<Move> moves){
 
         Random rand = new Random();
         int chosen = Math.abs(rand.nextInt()) % moves.size();
         return moves.get(chosen);
     }
 
-    private ArrayList<Move> getBestMoves(@NotNull ArrayList<Move> moves){
+    private ArrayList<Move> getBestMoves(ArrayList<Move> moves){
 
         int bestScore;
 
@@ -105,7 +108,7 @@ public class AI implements Player{
         return bestMoves;
     }
 
-    private void calculateMoveValues(@NotNull ArrayList<Move> moves){
+    private void calculateMoveValues(ArrayList<Move> moves){
 
         Board temp = new Board(calculatorBoard);
 
@@ -113,10 +116,10 @@ public class AI implements Player{
 
             temp.makeMove(move);
 
-            if(deepness > 1){
+            if(level > 1){
 
-                AI nextLevel = new AI(team.getOpposite(), temp, deepness - 1);
-                try { temp.makeMove(nextLevel.thinkOutMove()); } catch (NoValidMoveException e) { break; }
+                AI nextLevel = new AI(team.getOpposite(), level - 1);
+                try { temp.makeMove(nextLevel.thinkOutMove(temp)); } catch (NoValidMoveException e) { break; }
             }
 
             move.value = temp.getValue();

@@ -10,7 +10,7 @@ public interface Player {
     UnitType team = null;
     Board GameBoard = null;
 
-    Move thinkOutMove() throws NoValidMoveException;
+    Move thinkOutMove(Board board) throws NoValidMoveException;
 
     UnitType getTeam();
 }

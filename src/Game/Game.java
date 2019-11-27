@@ -12,68 +12,33 @@ import java.util.ArrayList;
 
 public class Game {
 
-    public Board GameBoard;
+    private Board GameBoard;
     private ArrayList<Player> players;
 
-    public Game( Board GameBoard) {
+    public Game(Board GameBoard, Player red, Player blue) {
 
-            this.GameBoard = new Board(GameBoard);
+            this.GameBoard = GameBoard;
             players = new ArrayList<>(2);
+
+            if(!red.getTeam().equals(blue.getTeam())){
+
+                players.add(red);
+                players.add(blue);
+            }
     }
 
-    public void start(){
-
-        try {
-            while (true)
-                nextPlayer();
-        }
-
-        catch (GameEndedException e) { endGame(); GameBoard.resetBoard(); }
-    }
-
-    public void endGame(){
-
-        UnitType winner = GameBoard.getWinner();
-
-        if(winner.equals(UnitType.EMPTY))
-            System.out.println("DRAW");
-
-        else
-            System.out.println(winner + " WON!");
-    }
-
-    public void addHuman(UnitType team) {
-
-        if(!players.isEmpty() && !players.get(0).getTeam().equals(team))
-            players.add(new Human(team, GameBoard));
-
-        else
-            System.out.println("Players must have different team!");
-    }
-
-    public void addAI(UnitType team, int level){
-
-        if(players.isEmpty())
-            players.add(new AI(team, GameBoard, level));
-
-        else if(!players.isEmpty())
-            if(!players.get(0).getTeam().equals(team))
-                players.add(new AI(team, GameBoard, level));
-
-        else
-            System.out.println("Players must have different team!");
-    }
-
-    public void nextPlayer() throws GameEndedException {
+    public Boolean nextPlayer() {
 
         if(GameBoard.testForEnd())
-            throw new GameEndedException("");
+            return false;
 
         for (Player player : players)
             if (!player.getTeam().equals(GameBoard.getPreviousPlayer())) {
 
-                try{ GameBoard.makeMove(player.thinkOutMove()); }
-                catch (NoValidMoveException e) { throw new GameEndedException(""); }
+                try{ GameBoard.makeMove(player.thinkOutMove(GameBoard)); }
+                catch (NoValidMoveException e) { return false; }
             }
+
+        return true;
     }
 }
