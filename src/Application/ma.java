@@ -29,5 +29,6 @@ public class ma extends Application {
         while (game.nextPlayer());
 
         System.out.println(b);
+        System.out.println(b.getWinner());
     }
 }

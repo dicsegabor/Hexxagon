@@ -1,22 +1,25 @@
 package Players;
 
+import Application.Main;
 import Controls.Board;
+import Controls.Coordinate;
 import Controls.Move;
 import Enums.UnitType;
 
 public class Human implements Player{
 
     public UnitType team;
-    private Board GameBoard;
+    private Main game;
 
-    public Human(UnitType team) {
+    public Human(UnitType team, Main game) {
 
         this.team = team;
+        this.game = game;
     }
 
     public Move thinkOutMove(Board board){
 
-        GameBoard = board;
+        game.makeMove(game.waitForPlayerInteraction());
         return null;
     }
 

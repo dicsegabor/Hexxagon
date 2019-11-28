@@ -1,7 +1,5 @@
 package Graphics;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
@@ -60,16 +58,16 @@ public class GUIMaker {
         imageView.setPreserveRatio(true);
     }
 
-    private BackgroundImage imageToBackgroundImage(Image image) {
+    public BackgroundImage imageToBackgroundImage(Image image) {
 
         BackgroundSize size = new BackgroundSize(image.getWidth() * widthRatio, image.getHeight() * heightRatio, false, false, false, false);
         return new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, size);
     }
 
-    private Image loadImage(String fileName) {
+    public Image loadImage(String fileName) {
 
         try { return new Image(new FileInputStream("Graphics\\1920x1080\\" + fileName + ".png")); }
-        catch (FileNotFoundException e) { System.out.println("File not found!"); }
+        catch (FileNotFoundException e) { System.out.println("File \"" + fileName + ".png\" not found!"); }
 
         return null;
     }
@@ -91,10 +89,10 @@ public class GUIMaker {
         return bt;
     }
 
-    private void placeNode(Node node, Point2D place){
+    private void placeButton(Button button, Point2D place){
 
-        node.setLayoutX(backgroundX + place.getX() * widthRatio);
-        node.setLayoutY(backgroundY + place.getY() * heightRatio);
+        button.setLayoutX(backgroundX + place.getX() * widthRatio);
+        button.setLayoutY(backgroundY + place.getY() * heightRatio);
     }
 
     public Group menu(){
@@ -136,6 +134,15 @@ public class GUIMaker {
         return new Group(elements);
     }
 
+    public Group game(){
+
+        ArrayList<Node> elements = new ArrayList<>();
+        elements.add(loadBackGround("Game"));
+        elements.add(makeButton("Menu Button", new Point2D(76, 967)));
+
+        return new Group(elements);
+    }
+
     public Group editor(){
 
         ArrayList<Node> elements = new ArrayList<>();
@@ -162,7 +169,7 @@ public class GUIMaker {
 
         Button button = imageToButton(fileName);
 
-        placeNode(button, place);
+        placeButton(button, place);
 
         return button;
     }

@@ -52,7 +52,7 @@ public class Board implements Serializable {
         BoardIOHandler.save(defaultBoard, "emptyBoard");
     }
 
-    public void resetBoard(){
+    public void reset(){
 
         for(Coordinate c : usefulCoordinates)
             getField(c).setContent(OriginalBoard[c.y][c.x].getContent());
@@ -100,45 +100,13 @@ public class Board implements Serializable {
 
     private void conquerAdjacentFields(Coordinate center){
 
-        ArrayList<Coordinate> adjacentFields = getFieldCoordinatesInRange(center, MoveType.SHORT);
-        selectEnemyFields(adjacentFields);
+        ArrayList<Coordinate> adjacentFields = getSpecifiedFieldsInRange(center, MoveType.SHORT, getField(center).getContent().getOpposite());
 
         for(Coordinate c : adjacentFields)
             getField(c).setContent(getField(center).getContent());
     }
 
-    public ArrayList<Coordinate> getFieldCoordinatesInRange( Coordinate center, MoveType moveType) {
-
-        ArrayList<Coordinate> fields = new ArrayList<>();
-
-        int range;
-        if (moveType.equals(MoveType.SHORT)) range = 1;
-        else range = 2;
-
-        int lowerY = center.y - 2 * range;
-        if(lowerY < 0) lowerY = 0;
-
-        int higherY = center.y + 2 * range;
-        if (higherY > HEIGHT - 1) higherY = HEIGHT;
-
-        int lowerX = center.x - range;
-        if(lowerX < 0) lowerX = 0;
-
-        int higherX = center.x + range;
-        if (higherX > WIDTH - 1) higherX = WIDTH;
-
-        Coordinate leftUpper = new Coordinate(lowerX, higherY);
-        Coordinate rightLower = new Coordinate(higherX, lowerY);
-
-        for(Coordinate c : coordinates)
-            if(c.isBetween(leftUpper, rightLower))
-                if(getField(c).getContent().isUsable() && center.getDistance(c).equals(moveType))
-                    fields.add(c);
-
-        return fields;
-    }
-
-    public ArrayList<Coordinate> getFieldCoordinatesInRange( Coordinate center, MoveType moveType, UnitType content) {
+    public ArrayList<Coordinate> getSpecifiedFieldsInRange(Coordinate center, MoveType moveType, UnitType content) {
 
         ArrayList<Coordinate> fields = new ArrayList<>();
 
@@ -167,17 +135,6 @@ public class Board implements Serializable {
                     fields.add(c);
 
         return fields;
-    }
-
-    public void selectEmptyFields( ArrayList<Coordinate> fields){
-
-        fields.removeIf((f) -> !getField(f).getContent().isEmpty());
-    }
-
-    public void selectEnemyFields( ArrayList<Coordinate> fields) {
-
-        UnitType enemy = getPreviousPlayer();
-        fields.removeIf((f) -> !getField(f).getContent().equals(enemy.getOpposite()));
     }
 
     public Field getField( Coordinate coordinate){

@@ -28,10 +28,10 @@ public class Main extends Application {
     private GUIMaker maker = new GUIMaker();
     private Stage primaryStage;
     private Board board = BoardIOHandler.load("Save 1");
-    private Player red = new Human(UnitType.RED), blue  = new Human(UnitType.BLUE);
+    private Player red = new Human(UnitType.RED, this), blue  = new Human(UnitType.BLUE, this);
     private ArrayList<Button> currentSelection = new ArrayList<>();
     private Group currentState;
-    private Coordinate from, to;
+    private Coordinate from = null, to = null;
     private UnitType currentlyPlacing = UnitType.HOLE;
 
     @Override
@@ -59,11 +59,9 @@ public class Main extends Application {
 
         Group root = maker.menu();
 
-        EventHandler startGameButton = value -> startGame();
         EventHandler configureBoardButton = value -> { editor(); refresh(); };
         EventHandler quitToDosButton = value -> primaryStage.close();
 
-        ((Button)root.getChildren().get(1)).setOnAction(startGameButton);
         ((Button)root.getChildren().get(3)).setOnAction(configureBoardButton);
         ((Button)root.getChildren().get(4)).setOnAction(quitToDosButton);
 
@@ -84,7 +82,7 @@ public class Main extends Application {
 
             toggleButtons.get(i).setOnAction(value -> {
                 if(fi == 0)
-                    red = new Human(UnitType.RED);
+                    red = new Human(UnitType.RED, this);
 
                 else
                     red = new AI(UnitType.RED, fi);
@@ -99,7 +97,7 @@ public class Main extends Application {
 
             toggleButtons.get(i).setOnAction(value -> {
                 if(fi == 4)
-                    red = new Human(UnitType.BLUE);
+                    red = new Human(UnitType.BLUE, this);
 
                 else
                     red = new AI(UnitType.BLUE, fi);
@@ -155,68 +153,9 @@ public class Main extends Application {
         }
     }
 
-    private void game(){
+    private Button[][] getBoardContent() {
 
-        ArrayList<Node> elements = new ArrayList<>();
-        elements.add(maker.loadBackGround("Game"));
-
-        ArrayList<Button> buttons = new ArrayList<>();
-        buttons.add(maker.makeButton("Menu Button", new Point2D(76, 967)));
-        buttons.get(0).setOnAction(value -> { menu(); refresh(); board.resetBoard(); } );
-
-        buttons.addAll(addUnits());
-
-        elements.addAll(buttons);
-
-        currentState = new Group(elements);
-    }
-
-    private void end(UnitType winner){
-
-        ArrayList<Node> elements = new ArrayList<>();
-        elements.add(maker.loadBackGround("Void"));
-
-        Button endButton = null;
-
-        switch (winner){
-
-            case RED:
-                endButton = maker.makeButton("Red Won", new Point2D(533, 323));
-                break;
-
-            case BLUE:
-                endButton = maker.makeButton("Blue Won", new Point2D(533, 323));
-                break;
-
-            case EMPTY:
-                endButton = maker.makeButton("Tie", new Point2D(533, 323));
-                break;
-        }
-
-        endButton.setOnAction(value -> { menu(); refresh(); board.resetBoard(); } );
-        elements.add(endButton);
-
-        currentState = new Group(elements);
-    }
-
-    private void startGame() {
-
-        game();
-
-        refresh();
-
-        Game game = new Game(board, red, blue);
-
-        while (game.nextPlayer());
-
-        end(board.getWinner());
-
-        refresh();
-    }
-
-    private ArrayList<Button> addUnits() {
-
-        ArrayList<Button> units = new ArrayList<>();
+        Button[][] units = new Button[17][9];
 
         for(Coordinate c : board.coordinates){
 
@@ -229,19 +168,19 @@ public class Main extends Application {
                     case RED:
                         unit = maker.makeButton("Red", Converter.coordinateToPoint(c));
                         if(board.getPreviousPlayer().equals(UnitType.BLUE))
-                            unit.setOnAction(value -> { addSelected(c); from = c; });
-                        units.add(unit);
+                            unit.setOnAction(value -> { displayPossibilities(c); from = c; });
+                        units[c.y][c.x] = unit;
                         break;
 
                     case BLUE:
                         unit = maker.makeButton("Blue", Converter.coordinateToPoint(c));
                         if(board.getPreviousPlayer().equals(UnitType.RED))
-                            unit.setOnAction(value -> { addSelected(c); from = c; });
-                        units.add(unit);
+                            unit.setOnAction(value -> { displayPossibilities(c); from = c; });
+                        units[c.y][c.x] = unit;
                         break;
 
                     case HOLE:
-                        units.add(maker.makeButton("Hole", Converter.coordinateToPointForField(c)));
+                        units[c.y][c.x] = maker.makeButton("Hole", Converter.coordinateToPointForField(c));
                         break;
 
                     default:
@@ -254,28 +193,28 @@ public class Main extends Application {
         return units;
     }
 
-    private void addSelected(Coordinate center) {
+    private void displayPossibilities(Coordinate center) {
 
         currentState.getChildren().removeAll(currentSelection);
         currentSelection.clear();
 
         ArrayList<Button> buttons = new ArrayList<>();
 
-        ArrayList<Coordinate> shortMoves = new ArrayList<>(board.getFieldCoordinatesInRange(center, MoveType.SHORT, UnitType.EMPTY));
+        ArrayList<Coordinate> shortMoves = new ArrayList<>(board.getSpecifiedFieldsInRange(center, MoveType.SHORT, UnitType.EMPTY));
 
         for(Coordinate c : shortMoves){
 
             Button bt = maker.makeButton("Short Move", Converter.coordinateToPointForField(c));
-            bt.setOnAction(value -> { to = c; makeMove(new Move(from, to)); });
+            bt.setOnAction(value -> to = c );
             buttons.add(bt);
         }
 
-        ArrayList<Coordinate> longMoves = new ArrayList<>(board.getFieldCoordinatesInRange(center, MoveType.LONG, UnitType.EMPTY));
+        ArrayList<Coordinate> longMoves = new ArrayList<>(board.getSpecifiedFieldsInRange(center, MoveType.LONG, UnitType.EMPTY));
 
         for(Coordinate c : longMoves){
 
             Button bt = maker.makeButton("Long Move", Converter.coordinateToPointForField(c));
-            bt.setOnAction(value -> { to = c; makeMove(new Move(from, to)); });
+            bt.setOnAction(value -> to = c );
             buttons.add(bt);
         }
 
@@ -287,11 +226,22 @@ public class Main extends Application {
         currentState.getChildren().addAll(currentSelection);
     }
 
-    private void makeMove(Move move){
+    public Move waitForPlayerInteraction(){
+
+        while(from.equals(null) && to.equals(null));
+
+        Move move = new Move(from, to);
+
+        from = null;
+        to = null;
+
+        return move;
+    }
+
+    public void makeMove(Move move){
 
         board.makeMove(move);
         currentState.getChildren().removeAll(currentSelection);
-        game();
         refresh();
     }
 }

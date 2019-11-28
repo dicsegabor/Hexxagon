@@ -7,7 +7,6 @@ import Controls.MoveValueComparator;
 import Enums.MoveType;
 import Enums.UnitType;
 import Exeptions.NoValidMoveException;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,9 +48,8 @@ public class AI implements Player{
 
         for(Coordinate source : sources) {
 
-            ArrayList<Coordinate> possibleFields = calculatorBoard.getFieldCoordinatesInRange(source, MoveType.SHORT);
-            possibleFields.addAll(calculatorBoard.getFieldCoordinatesInRange(source, MoveType.LONG));
-            calculatorBoard.selectEmptyFields(possibleFields);
+            ArrayList<Coordinate> possibleFields = calculatorBoard.getSpecifiedFieldsInRange(source, MoveType.SHORT, UnitType.EMPTY);
+            possibleFields.addAll(calculatorBoard.getSpecifiedFieldsInRange(source, MoveType.LONG, UnitType.EMPTY));
 
             for (Coordinate target : possibleFields) {
 
@@ -118,12 +116,17 @@ public class AI implements Player{
 
             if(level > 1){
 
-                AI nextLevel = new AI(team.getOpposite(), level - 1);
-                try { temp.makeMove(nextLevel.thinkOutMove(temp)); } catch (NoValidMoveException e) { break; }
+                int i = level;
+
+                while(i-- > 1) {
+
+                    AI nextLevel = new AI(team.getOpposite(), 1);
+                    try { temp.makeMove(nextLevel.thinkOutMove(temp)); } catch (NoValidMoveException e) { break; }
+                }
             }
 
             move.value = temp.getValue();
-            temp.resetBoard();
+            temp.reset();
         }
     }
 

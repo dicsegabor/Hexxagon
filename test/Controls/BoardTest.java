@@ -62,7 +62,7 @@ class BoardTests {
 
         Board testedBoard = new Board(testBoard);
         testedBoard.makeMove(testMove);
-        testedBoard.resetBoard();
+        testedBoard.reset();
         assertEquals(testedBoard, testBoard);
     }
 
