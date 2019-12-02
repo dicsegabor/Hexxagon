@@ -5,7 +5,6 @@ import Enums.UnitType;
 import Exeptions.NoValidMoveException;
 import IO.BoardIOHandler;
 import IO.Reader;
-import Players.AI;
 
 import java.io.Serializable;
 import java.util.ArrayList;

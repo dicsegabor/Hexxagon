@@ -1,9 +1,5 @@
-package Players;
+package Controls;
 
-import Controls.Board;
-import Controls.Coordinate;
-import Controls.Move;
-import Controls.MoveValueComparator;
 import Enums.MoveType;
 import Enums.UnitType;
 import Exeptions.NoValidMoveException;
@@ -12,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
-public class AI implements Player{
+public class AI {
 
     private final UnitType team;
     private Board calculatorBoard;
@@ -116,13 +112,8 @@ public class AI implements Player{
 
             if(level > 1){
 
-                int i = level;
-
-                while(i-- > 1) {
-
-                    AI nextLevel = new AI(team.getOpposite(), 1);
-                    try { temp.makeMove(nextLevel.thinkOutMove(temp)); } catch (NoValidMoveException e) { break; }
-                }
+                AI nextLevel = new AI(team.getOpposite(), level - 1);
+                try { temp.makeMove(nextLevel.thinkOutMove(temp)); } catch (NoValidMoveException e) { break; }
             }
 
             move.value = temp.getValue();
