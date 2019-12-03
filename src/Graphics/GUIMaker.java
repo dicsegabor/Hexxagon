@@ -72,7 +72,7 @@ public class GUIMaker {
         return null;
     }
 
-    public void setButtonBackground(Button button, String fileName){
+    public void setButtonBackground(Button button, String fileName) {
 
         button.setBackground(new Background(imageToBackgroundImage(loadImage(fileName))));
     }

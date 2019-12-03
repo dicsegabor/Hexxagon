@@ -151,10 +151,9 @@ public class Board implements Serializable {
 
     public Boolean testForEnd() {
 
-        Board testBoard = new Board(this);
+        AI tester = new AI(getPreviousPlayer().getOpposite(), this, 1);
 
-        AI tester = new AI(getPreviousPlayer().getOpposite(), 1);
-        try{ tester.thinkOutMove(testBoard); }
+        try{ tester.bestMove(); }
         catch (NoValidMoveException e) { return true; }
 
         return false;

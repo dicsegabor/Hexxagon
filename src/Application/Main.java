@@ -1,7 +1,6 @@
 package Application;
 
 import Controls.Board;
-import Controls.Converter;
 import Controls.Coordinate;
 import Controls.Move;
 import Enums.MoveType;
@@ -90,7 +89,7 @@ public class Main extends Application {
                     red = null;
 
                 else
-                    red = new AI(UnitType.RED, fi);
+                    red = new AI(UnitType.RED, board, fi);
 
                 maker.setButtonBackground(toggleButtons.get(fi), "Active Button");
                 setButtonBackgrounds(toggleButtons, 0, 4, fi); });
@@ -106,7 +105,7 @@ public class Main extends Application {
                     blue = null;
 
                 else
-                    blue = new AI(UnitType.BLUE, fi - 4);
+                    blue = new AI(UnitType.BLUE, board, fi - 4);
 
                 maker.setButtonBackground(toggleButtons.get(fi), "Active Button");
                 setButtonBackgrounds(toggleButtons, 4, 8, fi); });
@@ -169,10 +168,10 @@ public class Main extends Application {
         try {
 
             if (red != null)
-                board.makeMove(red.thinkOutMove(board));
+                board.makeMove(red.bestMove());
 
             else if (blue != null)
-                board.makeMove(blue.thinkOutMove(board));
+                board.makeMove(blue.bestMove());
         }
 
         catch (NoValidMoveException e) { show(endGame()); }
@@ -189,8 +188,8 @@ public class Main extends Application {
 
             while (true) {
 
-                board.makeMove(red.thinkOutMove(board));
-                board.makeMove(blue.thinkOutMove(board));
+                board.makeMove(red.bestMove());
+                board.makeMove(blue.bestMove());
             }
         }
 
@@ -208,21 +207,21 @@ public class Main extends Application {
             switch (board.getField(c).getContent()){
 
                 case RED:
-                    Button btr = maker.makeButton("Red", Converter.coordinateToPoint(c));
+                    Button btr = maker.makeButton("Red", Coordinate.coordinateToPoint(c));
                     if(board.getPreviousPlayer().equals(UnitType.BLUE))
                         btr.setOnAction(value -> { from = c; displayPossibilities(c); });
                     units.add(btr);
                     break;
 
                 case BLUE:
-                    Button btb = maker.makeButton("Blue", Converter.coordinateToPoint(c));
+                    Button btb = maker.makeButton("Blue", Coordinate.coordinateToPoint(c));
                     if(board.getPreviousPlayer().equals(UnitType.RED))
                         btb.setOnAction(value -> { from = c; displayPossibilities(c); });
                     units.add(btb);
                     break;
 
                 case HOLE:
-                    units.add(maker.makeButton("Hole", Converter.coordinateToPoint(c)));
+                    units.add(maker.makeButton("Hole", Coordinate.coordinateToPoint(c)));
                     break;
             }
         }
@@ -232,7 +231,7 @@ public class Main extends Application {
         editor.getChildren().addAll(currentUnits);
     }
 
-    private void showUnitsForGame(){
+    private void showUnitsForGame() {
 
         game.getChildren().removeAll(currentUnits);
         game.getChildren().removeAll(currentSelection);
@@ -245,21 +244,21 @@ public class Main extends Application {
             switch (board.getField(c).getContent()){
 
                 case RED:
-                    Button btr = maker.makeButton("Red", Converter.coordinateToPoint(c));
+                    Button btr = maker.makeButton("Red", Coordinate.coordinateToPoint(c));
                     if(board.getPreviousPlayer().equals(UnitType.BLUE))
                         btr.setOnAction(value -> { from = c; displayPossibilities(c); });
                     units.add(btr);
                     break;
 
                 case BLUE:
-                    Button btb = maker.makeButton("Blue", Converter.coordinateToPoint(c));
+                    Button btb = maker.makeButton("Blue", Coordinate.coordinateToPoint(c));
                     if(board.getPreviousPlayer().equals(UnitType.RED))
                         btb.setOnAction(value -> { from = c; displayPossibilities(c); });
                     units.add(btb);
                     break;
 
             case HOLE:
-                    units.add(maker.makeButton("Hole", Converter.coordinateToPoint(c)));
+                    units.add(maker.makeButton("Hole", Coordinate.coordinateToPoint(c)));
                     break;
             }
         }
@@ -280,7 +279,7 @@ public class Main extends Application {
 
         for(Coordinate c : shortMoves){
 
-            Button bt = maker.makeButton("Short Move", Converter.coordinateToPointForField(c));
+            Button bt = maker.makeButton("Short Move", Coordinate.coordinateToPoint(c));
             bt.setOnAction(value -> { to = c; makeMove(new Move(from, to)); nextPlayer(); });
             buttons.add(bt);
         }
@@ -289,12 +288,12 @@ public class Main extends Application {
 
         for(Coordinate c : longMoves){
 
-            Button bt = maker.makeButton("Long Move", Converter.coordinateToPointForField(c));
+            Button bt = maker.makeButton("Long Move", Coordinate.coordinateToPoint(c));
             bt.setOnAction(value -> { to = c; makeMove(new Move(from, to)); nextPlayer(); } );
             buttons.add(bt);
         }
 
-        Button bt = maker.makeButton("Selected", Converter.coordinateToPointForField(center));
+        Button bt = maker.makeButton("Selected", Coordinate.coordinateToPoint(center));
         buttons.add(bt);
 
         currentSelection.addAll(buttons);

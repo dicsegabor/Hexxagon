@@ -14,20 +14,19 @@ public class AI {
     private Board calculatorBoard;
     private final int level;
 
-    public AI(UnitType team, int deepness){
+    public AI(UnitType team, Board board, int level) {
 
         this.team = team;
-        this.level = deepness;
+        calculatorBoard = new Board(board);
+        this.level = level;
     }
 
-    public Move thinkOutMove(Board board) throws NoValidMoveException {
-
-        calculatorBoard = new Board(board);
+    public Move bestMove() throws NoValidMoveException {
 
         ArrayList<Move> moves;
 
         try{ moves = getPossibleMoves(); }
-        catch (NoValidMoveException e) { throw new NoValidMoveException("");}
+        catch (NoValidMoveException e) { throw new NoValidMoveException(""); }
 
         calculateMoveValues(moves);
 
@@ -112,17 +111,12 @@ public class AI {
 
             if(level > 1){
 
-                AI nextLevel = new AI(team.getOpposite(), level - 1);
-                try { temp.makeMove(nextLevel.thinkOutMove(temp)); } catch (NoValidMoveException e) { break; }
+                AI nextLevel = new AI(team.getOpposite(), temp, level - 1);
+                try { temp.makeMove(nextLevel.bestMove()); } catch (NoValidMoveException e) { break; }
             }
 
             move.value = temp.getValue();
             temp.reset();
         }
-    }
-
-    public UnitType getTeam(){
-
-        return team;
     }
 }

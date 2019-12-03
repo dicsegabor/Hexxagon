@@ -1,6 +1,7 @@
 package Controls;
 
 import Enums.MoveType;
+import javafx.geometry.Point2D;
 
 import java.io.Serializable;
 
@@ -36,6 +37,14 @@ public class Coordinate implements Serializable {
     public Boolean isBetween(Coordinate leftUpper, Coordinate rightLover){
 
         return x >= leftUpper.x && y <= leftUpper.y && x <= rightLover.x && y >= rightLover.y;
+    }
+
+    public static Point2D coordinateToPoint(Coordinate c){
+
+        double x = 49 + c.x * 178;
+        double y = 16 + c.y * 59.5;
+
+        return new Point2D(x, y);
     }
 
     @Override
