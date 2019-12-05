@@ -23,6 +23,17 @@ public enum UnitType {
 
     public Boolean isUsable() { return !(this.equals(HOLE) || this.equals(SPACE)); }
 
+    public String getFileName() {
+
+        switch (this){
+
+            case RED: return "Red";
+            case BLUE: return "Blue";
+            case HOLE: return "Hole";
+            default: return "Empty";
+        }
+    }
+
     public static UnitType parseUnitType(String s){
 
         switch (s) {

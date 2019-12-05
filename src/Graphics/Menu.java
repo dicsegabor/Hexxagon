@@ -1,5 +1,7 @@
 package Graphics;
 
+import Controls.AI;
+import Enums.UnitType;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
@@ -8,6 +10,8 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
+import java.util.ArrayList;
 
 public class Menu extends GUIBase {
 
@@ -25,6 +29,7 @@ public class Menu extends GUIBase {
         Button startGameButton = makeButton("Start Game Button", new Point2D(200, 896));
         startGameButton.setOnAction(event -> {
 
+            controller.game.addUnits();
             controller.primaryStage.getScene().setRoot(controller.game.getRoot());
         });
         root.getChildren().add(startGameButton);
@@ -71,6 +76,14 @@ public class Menu extends GUIBase {
         Button blueLevelAI3 = makeButton("Inactive Button", new Point2D(983, 400));
         root.getChildren().add(blueLevelAI3);
 
+        //Setting up all the chooser buttons
+        ArrayList<Button> playerChooseButtons = new ArrayList<>();
+
+        for (int i = 5; i < 13; i++)
+            playerChooseButtons.add((Button)root.getChildren().get(i));
+
+        setupMenuPlayerButtons(playerChooseButtons);
+
         //Making some worthless shiny buttons
         root.getChildren().add(makeButton("Active Button", new Point2D(184 , 637)));
         root.getChildren().add(makeButton("Inactive Button", new Point2D(184 , 702)));
@@ -78,6 +91,48 @@ public class Menu extends GUIBase {
         root.getChildren().add(makeButton("Active Button", new Point2D(983 , 637)));
         root.getChildren().add(makeButton("Inactive Button", new Point2D(983 , 702)));
         root.getChildren().add(makeButton("Inactive Button", new Point2D(983 , 767)));
+    }
+
+    private void setupMenuPlayerButtons(ArrayList<Button> toggleButtons){
+
+        for(int i = 0; i < 4; i++){
+
+            final int fi = i;
+
+            toggleButtons.get(i).setOnAction(value -> {
+
+                if(fi == 0)
+                    controller.red = null;
+
+                else
+                    controller.red = new AI(UnitType.RED, controller.gameBoard, fi);
+
+                setButtonBackground(toggleButtons.get(fi), "Active Button");
+                setButtonBackgrounds(toggleButtons, 0, 4, fi); });
+        }
+
+        for(int i = 4; i < 8; i++){
+
+            final int fi = i;
+
+            toggleButtons.get(i).setOnAction(value -> {
+
+                if(fi == 4)
+                    controller.blue = null;
+
+                else
+                    controller.blue = new AI(UnitType.BLUE, controller.gameBoard, fi - 4);
+
+                setButtonBackground(toggleButtons.get(fi), "Active Button");
+                setButtonBackgrounds(toggleButtons, 4, 8, fi); });
+        }
+    }
+
+    private void setButtonBackgrounds(ArrayList<Button> buttons, int from, int to, int without){
+
+        for(int i = from; i < to; i++)
+            if(i != without)
+                setButtonBackground(buttons.get(i), "Inactive Button");
     }
 
     public void setupStage(Stage stage){

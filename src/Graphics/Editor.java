@@ -1,13 +1,22 @@
 package Graphics;
 
+import Controls.Coordinate;
+import Enums.UnitType;
+import IO.BoardIOHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
+import jdk.nashorn.internal.ir.CallNode;
+
+import java.util.ArrayList;
 
 public class Editor extends GUIBase{
 
     private Controller controller;
     private Group root = new Group();
+
+    private ArrayList<Button> currentUnits = new ArrayList<>();
+    private UnitType currentlyPlacing = UnitType.HOLE;
 
     public Editor(Controller controller) {
 
@@ -24,21 +33,158 @@ public class Editor extends GUIBase{
         });
         root.getChildren().add(menuButton);
 
-        Button restoreButton =  makeButton("Restore Button", new Point2D(1393, 81));
-        root.getChildren().add(restoreButton);
+        Button save1Button = makeButton("Save 1 Button", new Point2D(1355, 50));
+        Button save2Button = makeButton("Save 2 Button", new Point2D(1355, 50));
+        save2Button.setVisible(false);
+        Button save3Button = makeButton("Save 3 Button", new Point2D(1355, 50));
+        save3Button.setVisible(false);
+        Button save4Button = makeButton("Save 4 Button", new Point2D(1355, 50));
+        save4Button.setVisible(false);
+        Button save5Button = makeButton("Save 5 Button", new Point2D(1355, 50));
+        save5Button.setVisible(false);
 
-        Button save1Button = makeButton("Save 1 Button", new Point2D(1355, 5));
+        save1Button.setOnAction(value -> { save1Button.setVisible(false); save2Button.setVisible(true);
+            BoardIOHandler.save(controller.gameBoard, "Save 1");
+            controller.gameBoard = BoardIOHandler.load("Save 2"); addUnits(); });
+        save2Button.setOnAction(value -> { save2Button.setVisible(false); save3Button.setVisible(true);
+            BoardIOHandler.save(controller.gameBoard, "Save 2");
+            controller.gameBoard = BoardIOHandler.load("Save 3"); addUnits(); });
+        save3Button.setOnAction(value -> { save3Button.setVisible(false); save4Button.setVisible(true);
+            BoardIOHandler.save(controller.gameBoard, "Save 3");
+            controller.gameBoard = BoardIOHandler.load("Save 4"); addUnits(); });
+        save4Button.setOnAction(value -> { save4Button.setVisible(false); save5Button.setVisible(true);
+            BoardIOHandler.save(controller.gameBoard, "Save 4");
+            controller.gameBoard = BoardIOHandler.load("Save 5"); addUnits(); });
+        save5Button.setOnAction(value -> { save5Button.setVisible(false); save1Button.setVisible(true);
+            BoardIOHandler.save(controller.gameBoard, "Save 5");
+            controller.gameBoard = BoardIOHandler.load("Save 1"); addUnits(); });
+
+        root.getChildren().add(save5Button);
+        root.getChildren().add(save4Button);
+        root.getChildren().add(save3Button);
+        root.getChildren().add(save2Button);
         root.getChildren().add(save1Button);
 
         //Making the placing chooser buttons
+        ArrayList<Button> placingTypeChooseButtons = new ArrayList<>();
+
         Button chooseHoleButton = makeButton("Active Button", new Point2D(81, 5));
-        root.getChildren().add(chooseHoleButton);
+        placingTypeChooseButtons.add(chooseHoleButton);
 
         Button chooseRedButton = makeButton("Inactive Button", new Point2D(81, 70));
-        root.getChildren().add(chooseRedButton);
+        placingTypeChooseButtons.add(chooseRedButton);
 
         Button chooseBlueButton = makeButton("Inactive Button", new Point2D(81, 135));
-        root.getChildren().add(chooseBlueButton);
+        placingTypeChooseButtons.add(chooseBlueButton);
+
+        setupPlaceButtons(placingTypeChooseButtons);
+
+        root.getChildren().addAll(placingTypeChooseButtons);
+
+        addUnits();
+    }
+
+    private void addUnits() {
+
+        root.getChildren().removeAll(currentUnits);
+        currentUnits.clear();
+
+        for (Coordinate coordinate : controller.gameBoard.coordinates) {
+
+            switch (controller.gameBoard.getField(coordinate).getContent()) {
+
+                case RED:
+                    Button rbt = makeButton("Red", Coordinate.coordinateToPoint(coordinate));
+                    rbt.setOnAction(value -> {
+
+                        if(controller.gameBoard.getField(coordinate).content.equals(currentlyPlacing))
+                            controller.gameBoard.getField(coordinate).content = UnitType.EMPTY;
+
+                        else
+                            controller.gameBoard.getField(coordinate).content = currentlyPlacing;
+
+                        addUnits();
+                    });
+                    currentUnits.add(rbt);
+                    break;
+
+                case BLUE:
+                    Button bbt = makeButton("Blue", Coordinate.coordinateToPoint(coordinate));
+                    bbt.setOnAction(value -> {
+
+                        if(controller.gameBoard.getField(coordinate).content.equals(currentlyPlacing))
+                            controller.gameBoard.getField(coordinate).content = UnitType.EMPTY;
+
+                        else
+                            controller.gameBoard.getField(coordinate).content = currentlyPlacing;
+
+                        addUnits();
+                    });
+                    currentUnits.add(bbt);
+                    break;
+
+                case EMPTY:
+                    Button ebt = makeButton("Empty", Coordinate.coordinateToPoint(coordinate));
+                    ebt.setOnAction(value -> {
+
+                        if(controller.gameBoard.getField(coordinate).content.equals(currentlyPlacing))
+                            controller.gameBoard.getField(coordinate).content = UnitType.EMPTY;
+
+                        else
+                            controller.gameBoard.getField(coordinate).content = currentlyPlacing;
+
+                        addUnits();
+                    });
+                    currentUnits.add(ebt);
+                    break;
+
+                case HOLE:
+                    Button hbt = makeButton("Hole", Coordinate.coordinateToPoint(coordinate));
+                    hbt.setOnAction(value -> {
+
+                        if(controller.gameBoard.getField(coordinate).content.equals(currentlyPlacing))
+                            controller.gameBoard.getField(coordinate).content = UnitType.EMPTY;
+
+                        else
+                            controller.gameBoard.getField(coordinate).content = currentlyPlacing;
+
+                        addUnits();
+                    });
+                    currentUnits.add(hbt);
+                    break;
+            }
+        }
+
+        root.getChildren().addAll(currentUnits);
+    }
+
+    private void setupPlaceButtons(ArrayList<Button> toggleButtons){
+
+        for(int i = 0; i < 3; i++){
+
+            final int fi = i;
+
+            toggleButtons.get(i).setOnAction(value -> {
+
+                if(fi == 0)
+                    currentlyPlacing = UnitType.HOLE;
+
+                else if(fi == 1)
+                    currentlyPlacing = UnitType.RED;
+
+                else
+                    currentlyPlacing = UnitType.BLUE;
+
+                setButtonBackground(toggleButtons.get(fi), "Active Button");
+                setButtonBackgrounds(toggleButtons, 0, 3, fi); });
+        }
+    }
+
+    private void setButtonBackgrounds(ArrayList<Button> buttons, int from, int to, int without){
+
+        for(int i = from; i < to; i++)
+            if(i != without)
+                setButtonBackground(buttons.get(i), "Inactive Button");
     }
 
     public Group getRoot(){

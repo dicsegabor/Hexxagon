@@ -11,7 +11,8 @@ public class Game extends GUIBase {
 
     private Controller controller;
     private Group root = new Group();
-
+    
+    private ArrayList<Button> currentSelection;
     private ArrayList<Button> currentUnits = new ArrayList<>();
 
     public Game(Controller controller) {
@@ -28,11 +29,9 @@ public class Game extends GUIBase {
             controller.primaryStage.getScene().setRoot(controller.menu.getRoot());
         });
         root.getChildren().add(menuButton);
-
-        addUnits();
     }
 
-    private void addUnits(){
+    public void addUnits() {
 
         root.getChildren().removeAll(currentUnits);
         currentUnits.clear();
@@ -43,6 +42,7 @@ public class Game extends GUIBase {
 
                 case RED:
                     currentUnits.add(makeButton("Red", Coordinate.coordinateToPoint(coordinate)));
+                    
                     break;
 
                 case BLUE:
