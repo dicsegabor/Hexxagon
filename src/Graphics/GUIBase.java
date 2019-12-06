@@ -3,6 +3,7 @@ package Graphics;
 import Controls.Coordinate;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,6 +13,13 @@ import javafx.stage.Screen;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+/**
+ * Ez az osztaly segit felbontasfuggetlenul megjeleniteni a programot.
+ * Attributumai:
+ * primaryScreenBounds: A kepernyo jelenlegi hatarai.
+ * widthRatio, heightRatio: mennyivel kissebb, vagy nagyobb, mint az eredeti grafika.
+ * backgroundX, backgroundY: mennyivel van eltolodva a hatter.
+ */
 public class GUIBase {
 
     protected Rectangle2D primaryScreenBounds;
@@ -23,6 +31,11 @@ public class GUIBase {
         loadBackGround("Void");
     }
 
+    /**
+     * Betolt egy kepet a kapott fajlnev alapjan es lekezeli az Exception-t.
+     * @param fileName A fajlnev, ami alapja betolti a kepet.
+     * @return Image
+     */
     protected Image loadImage(String fileName) {
 
         try { return new Image(new FileInputStream("Graphics\\1920x1080\\" + fileName + ".png")); }
@@ -31,6 +44,11 @@ public class GUIBase {
         return null;
     }
 
+    /**
+     * Beillesti a hatterbe a kepet. Megfeleloen meretezi, valamint kozepre igazitja.
+     * @param fileName A fajlnev, ami alapja betolti a kepet.
+     * @return ImageView
+     */
     protected ImageView loadBackGround(String fileName){
 
         Image image = loadImage(fileName);
@@ -47,6 +65,10 @@ public class GUIBase {
         return imageView;
     }
 
+    /**
+     * Kozpre igazitja a kapott kepet.
+     * @param imageView A kepnezet amit kzepre igazit.
+     */
     protected void centerImage(ImageView imageView){
 
         double ratioX = imageView.getFitWidth() / imageView.getImage().getWidth();
@@ -65,27 +87,26 @@ public class GUIBase {
         imageView.setPreserveRatio(true);
     }
 
-    protected ImageView makeImageView(String fileName, Point2D place){
-
-        ImageView imageView = new ImageView(loadImage(fileName));
-
-        imageView.setX(backgroundX + place.getX() * widthRatio);
-        imageView.setY(backgroundY + place.getY() * heightRatio);
-        imageView.setFitWidth(imageView.getImage().getWidth() * widthRatio);
-        imageView.setFitWidth(imageView.getImage().getHeight() * heightRatio);
-
-        return imageView;
-    }
-
+    /**
+     * Gombot keszit kapott fajlnev, ami a hattere lesz, valamint helyzete alapjan, amit az eredeti grafika alapjan adunk meg.
+     * @param fileName A fajlnev, ami alapja betolti a kepet.
+     * @param place A pont ahova teszi a gombot.
+     * @return Button
+     */
     protected Button makeButton(String fileName, Point2D place){
 
         Button button = imageToButton(fileName);
 
-        setButtonPlace(button, place);
+        placeNode(button, place);
 
         return button;
     }
 
+    /**
+     * Kapott fajnevbol betoltott kepet beallitja a gomb hatterenek, valamint megfeleloen meretezi a gombot a felbontashoz viszonyitva.
+     * @param fileName A fajlnev, ami alapja betolti a kepet.
+     * @return Button
+     */
     protected Button imageToButton(String fileName) {
 
         Button bt = new Button();
@@ -98,33 +119,35 @@ public class GUIBase {
         return bt;
     }
 
+    /**
+     * A gomb hatterehez alakitja at a kepet.
+     * @param image A kep, amit atalakit.
+     * @return BackgroundImage
+     */
     protected BackgroundImage imageToBackgroundImage(Image image) {
 
         BackgroundSize size = new BackgroundSize(image.getWidth() * widthRatio, image.getHeight() * heightRatio, false, false, false, false);
         return new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT, size);
     }
 
-    protected void setButtonPlace(Button button, Point2D place){
+    /**
+     * A kapott objektumot a kapott heyre helyezi el, de hozzaigazitja a felbontashoz.
+     * @param node Az objektum, amit elhelyez.
+     * @param place A pont ahova teszi az objektumot.
+     */
+    protected void placeNode(Node node, Point2D place){
 
-        button.setLayoutX(backgroundX + place.getX() * widthRatio);
-        button.setLayoutY(backgroundY + place.getY() * heightRatio);
+        node.setLayoutX(backgroundX + place.getX() * widthRatio);
+        node.setLayoutY(backgroundY + place.getY() * heightRatio);
     }
 
+    /**
+     * Atalitja egy kapott gomb hatteret a kapott fajlnev alapjan.
+     * @param button A gomb aminek kicsereli a hatteret.
+     * @param fileName A fajlnev, ami alapja betolti a kepet.
+     */
     protected void setButtonBackground(Button button, String fileName) {
 
         button.setBackground(new Background(imageToBackgroundImage(loadImage(fileName))));
-    }
-
-    public Coordinate pointToCoordinate(Point2D point){
-
-        Coordinate c = null;
-
-        for(int i = 0; i < 17; i++)
-            if((((21 + i * 59.5) * heightRatio) < point.getY() && ((102 + i * 59.5) * heightRatio) > point.getY()))
-                for (int j = 0; j < 9; j++)
-                    if ((((95 + j * 178) * widthRatio) < point.getX() && ((198 + j * 178) * widthRatio) > point.getX()))
-                        c = new Coordinate(j, i);
-
-        return c;
     }
 }

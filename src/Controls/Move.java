@@ -4,6 +4,9 @@ import Enums.MoveType;
 
 import java.io.Serializable;
 
+/**
+ * Egy lepest reprezental, ketto koordinatabol all, valamint a lepes tipusabol es ertekebol.
+ */
 public class Move  implements Serializable {
 
     public final Coordinate from;
@@ -16,11 +19,6 @@ public class Move  implements Serializable {
         this.from = from;
         this.to = to;
         type = from.getDistance(to);
-    }
-
-    public Boolean sameResult( Move move){
-
-        return to.equals(move.to) && type.equals(MoveType.SHORT);
     }
 
     public Boolean isValid(){

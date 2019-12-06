@@ -13,11 +13,18 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
+/**
+ * A menut valositja meg.
+ */
 public class Menu extends GUIBase {
 
     private Controller controller;
     private Group root = new Group();
 
+    /**
+     * Letrehozaskor kesziti el a kinezetet. Hozzadja a hatteret valamint a gombokat, es beallitja a gombok viselkedeset.
+     * @param controller A tartalmazo osztaly.
+     */
     public Menu(Controller controller) {
 
         this.controller = controller;
@@ -29,8 +36,7 @@ public class Menu extends GUIBase {
         Button startGameButton = makeButton("Start Game Button", new Point2D(200, 896));
         startGameButton.setOnAction(event -> {
 
-            controller.game.addUnits();
-            controller.primaryStage.getScene().setRoot(controller.game.getRoot());
+            controller.game.startGame();
         });
         root.getChildren().add(startGameButton);
 
@@ -93,6 +99,10 @@ public class Menu extends GUIBase {
         root.getChildren().add(makeButton("Inactive Button", new Point2D(983 , 767)));
     }
 
+    /**
+     * Beallitja a nehezseg valasztasahoz szukseges gombokat.
+     * @param toggleButtons
+     */
     private void setupMenuPlayerButtons(ArrayList<Button> toggleButtons){
 
         for(int i = 0; i < 4; i++){
@@ -135,6 +145,10 @@ public class Menu extends GUIBase {
                 setButtonBackground(buttons.get(i), "Inactive Button");
     }
 
+    /**
+     * Teljes kepernyosre allitja a kapott ablakot.
+     * @param stage Az ablak, amit beallit.
+     */
     public void setupStage(Stage stage){
 
         stage.setFullScreen(true);
@@ -142,6 +156,11 @@ public class Menu extends GUIBase {
         stage.setFullScreenExitHint("");
     }
 
+    /**
+     * Az ESCAPE billentyut beallitja, hogy zarja be az ablakot.
+     * @param stage Az ablak, amit beallit.
+     * @param key A billentyu, amit beallit.
+     */
     private void setExitKey(Stage stage, KeyCode key){
 
         stage.addEventHandler(KeyEvent.KEY_PRESSED, (KeyEvent event) -> {
@@ -151,6 +170,10 @@ public class Menu extends GUIBase {
         });
     }
 
+    /**
+     * Keszit egy Scene-t, ugy hogy megfelejen az aktualis felbontasnak.
+     * @return Scene
+     */
     public Scene makeScene(){
 
         return new Scene(root, primaryScreenBounds.getWidth(), primaryScreenBounds.getHeight(), Color.BLACK);

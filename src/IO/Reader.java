@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+/**
+ * Regebbi fajta beolvasashoz kell.
+ */
 public class Reader {
 
     Scanner sc;

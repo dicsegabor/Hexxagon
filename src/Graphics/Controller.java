@@ -5,11 +5,15 @@ import Controls.Board;
 import IO.BoardIOHandler;
 import javafx.stage.Stage;
 
+/**
+ * Tarolja a jatek futasahoz es megjelenitesehez szukseges elemeket igy nem kozvetlen a "Main"-ben kell.
+ */
 public class Controller {
 
     public Menu menu;
     public Game game;
     public Editor editor;
+    public End end;
 
     public Board gameBoard;
     public AI red , blue;

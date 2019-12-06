@@ -6,10 +6,12 @@ import IO.BoardIOHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.control.Button;
-import jdk.nashorn.internal.ir.CallNode;
 
 import java.util.ArrayList;
 
+/**
+ * Az editort valositja meg.
+ */
 public class Editor extends GUIBase{
 
     private Controller controller;
@@ -17,7 +19,12 @@ public class Editor extends GUIBase{
 
     private ArrayList<Button> currentUnits = new ArrayList<>();
     private UnitType currentlyPlacing = UnitType.HOLE;
+    private int currentBoard = 1;
 
+    /**
+     * Letrehozaskor kesziti el a kinezetet. Hozzadja a hatteret valamint a gombokat, es beallitja a gombok viselkedeset.
+     * @param controller A tartalmazo osztaly.
+     */
     public Editor(Controller controller) {
 
         this.controller = controller;
@@ -28,7 +35,8 @@ public class Editor extends GUIBase{
         //Making the main buttons
         Button menuButton = makeButton("Menu Button", new Point2D(76, 967));
         menuButton.setOnAction(event -> {
-
+            BoardIOHandler.save(controller.gameBoard, "Save " + currentBoard);
+            controller.gameBoard = BoardIOHandler.load("Save " + currentBoard);
             controller.primaryStage.getScene().setRoot(controller.menu.getRoot());
         });
         root.getChildren().add(menuButton);
@@ -45,19 +53,19 @@ public class Editor extends GUIBase{
 
         save1Button.setOnAction(value -> { save1Button.setVisible(false); save2Button.setVisible(true);
             BoardIOHandler.save(controller.gameBoard, "Save 1");
-            controller.gameBoard = BoardIOHandler.load("Save 2"); addUnits(); });
+            controller.gameBoard = BoardIOHandler.load("Save 2"); addUnits(); currentBoard = 1; });
         save2Button.setOnAction(value -> { save2Button.setVisible(false); save3Button.setVisible(true);
             BoardIOHandler.save(controller.gameBoard, "Save 2");
-            controller.gameBoard = BoardIOHandler.load("Save 3"); addUnits(); });
+            controller.gameBoard = BoardIOHandler.load("Save 3"); addUnits(); currentBoard = 2; });
         save3Button.setOnAction(value -> { save3Button.setVisible(false); save4Button.setVisible(true);
             BoardIOHandler.save(controller.gameBoard, "Save 3");
-            controller.gameBoard = BoardIOHandler.load("Save 4"); addUnits(); });
+            controller.gameBoard = BoardIOHandler.load("Save 4"); addUnits(); currentBoard = 3; });
         save4Button.setOnAction(value -> { save4Button.setVisible(false); save5Button.setVisible(true);
             BoardIOHandler.save(controller.gameBoard, "Save 4");
-            controller.gameBoard = BoardIOHandler.load("Save 5"); addUnits(); });
+            controller.gameBoard = BoardIOHandler.load("Save 5"); addUnits(); currentBoard = 4; });
         save5Button.setOnAction(value -> { save5Button.setVisible(false); save1Button.setVisible(true);
             BoardIOHandler.save(controller.gameBoard, "Save 5");
-            controller.gameBoard = BoardIOHandler.load("Save 1"); addUnits(); });
+            controller.gameBoard = BoardIOHandler.load("Save 1"); addUnits(); currentBoard = 5; });
 
         root.getChildren().add(save5Button);
         root.getChildren().add(save4Button);
@@ -84,6 +92,9 @@ public class Editor extends GUIBase{
         addUnits();
     }
 
+    /**
+     * A tabla ertekei alapjan hozzadja az egysegeket jelkepezo gombokat, es beallitja viselkedesuket.
+     */
     private void addUnits() {
 
         root.getChildren().removeAll(currentUnits);
@@ -158,6 +169,10 @@ public class Editor extends GUIBase{
         root.getChildren().addAll(currentUnits);
     }
 
+    /**
+     * Beallitja a szerkesztogombok viselekedeset.
+     * @param toggleButtons A gombok, amiket beallit.
+     */
     private void setupPlaceButtons(ArrayList<Button> toggleButtons){
 
         for(int i = 0; i < 3; i++){

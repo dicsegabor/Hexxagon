@@ -4,6 +4,9 @@ import Enums.UnitType;
 
 import java.io.Serializable;
 
+/**
+ * Ebbol epul fel a jatektabla. Taolja a poziciojat, valamint a tartalmat.
+ */
 public class Field  implements Serializable {
 
     private final Coordinate position;

@@ -9,6 +9,10 @@ import IO.Reader;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * A board osztaly tarolja a jatektablat alkoto "Field"-ekbol allo 2d-s tombot.
+ * Tarol meg egy final verziot a tablabol, ami konstruktor hivasakor jon letre, a reset fuggveny erre allitja vissza.
+ */
 public class Board implements Serializable {
 
     private final int WIDTH = 9, HEIGHT = 17;
@@ -19,6 +23,11 @@ public class Board implements Serializable {
     private Field[][] GameBoard = new Field[HEIGHT][WIDTH];
     public final ArrayList<Coordinate> usefulCoordinates = new ArrayList<>();
 
+    /**
+     * Nem az a szerializaas amit hasznalok, ez egy masik fuggvenyhez kellett.
+     * Txt-fajlbol olvas be.
+     * @param fileName A fajlnev, amibol betolti a tablat.
+     */
     public Board(String fileName){
 
         generateCoordinates();
@@ -42,6 +51,10 @@ public class Board implements Serializable {
         setOriginalBoard();
     }
 
+    /**
+     * Szerializalasnal, ha modositottam a board tartalmat akkor nem tudta betolteni,
+     * igy egy masik modszerrel is be kellett toltenem.
+     */
     public static void refreshBoards(){
 
         Board defaultBoard = new Board("defaultBoard");
@@ -51,6 +64,9 @@ public class Board implements Serializable {
         BoardIOHandler.save(defaultBoard, "emptyBoard");
     }
 
+    /**
+     * Visszaallitja a tabla tartalmat olyanra, mintha most lett volna letrehozva.
+     */
     public void reset(){
 
         for(Coordinate c : usefulCoordinates)
@@ -59,18 +75,28 @@ public class Board implements Serializable {
         moves.clear();
     }
 
+    /**
+     * Lemasolja a parameterkent kapott tabla "Gameboard"-jat a sajat "Gameboard"jaba.
+     * @param board A tabla, amit lemasol.
+     */
     private void setGameBoard(Board board){
 
         for(Coordinate c : board.coordinates)
             GameBoard[c.y][c.x] = new Field(board.getField(c).getPosition(), board.getField(c).getContent());
     }
 
+    /**
+     * Beallitja a final tipusu "Gameboard"-ot a sajat "Gameboard"-ja alapjan.
+     */
     private void setOriginalBoard(){
 
         for(Coordinate c : coordinates)
             OriginalBoard[c.y][c.x] = new Field(getField(c).getPosition(), getField(c).getContent());
     }
 
+    /**
+     * A 2d-s tomb indexelesehez koordnatakat general.
+     */
     private void generateCoordinates(){
 
         for(int y = 0; y < HEIGHT; y++)
@@ -78,6 +104,9 @@ public class Board implements Serializable {
                 coordinates.add(new Coordinate(x, y));
     }
 
+    /**
+     * Ha a mezo tartalma hasznos, a tablan valo szamolasnal, akkor lementi a koordinatajat.
+     */
     private void getUsefulCoordinates(){
 
         for(Coordinate c : coordinates)
@@ -85,6 +114,12 @@ public class Board implements Serializable {
                 usefulCoordinates.add(c);
     }
 
+    /**
+     * Kapott parameter alapjan vegrehajtja a lepest a tablan.
+     * A lepes utan meghija a "conquerAdjacentFields" fuggvenyt.
+     * A "moves" listahoz hozzaadja a kapott lepest.
+     * @param move A lepes, amit vegrehajt.
+     */
     public void makeMove( Move move) {
 
         moves.add(move);
@@ -97,6 +132,10 @@ public class Board implements Serializable {
         conquerAdjacentFields(move.to);
     }
 
+    /**
+     * A kapott mezo szomszedait elfoglalja, amennyiben ellenkezo szinuek, mint a legutobbi lepes vegrehajtoja.
+     * @param center A koordinata, ami korul elfoglalja a mezoket.
+     */
     private void conquerAdjacentFields(Coordinate center){
 
         ArrayList<Coordinate> adjacentFields = getSpecifiedFieldsInRange(center, MoveType.SHORT, getField(center).getContent().getOpposite());
@@ -105,6 +144,13 @@ public class Board implements Serializable {
             getField(c).setContent(getField(center).getContent());
     }
 
+    /**
+     * A kapott mezo meghatarozott sugaraban visszadja a mezok koordinatait, amennyiben tartalmuk megegyezik a parameterkent kapottal.
+     * @param center A kozeppont, ami korul visszaadja a mezoket.
+     * @param moveType A sugar amiben visszaadja a mezoket.
+     * @param content A tartalom, ami alapjan szelktalja a mezoket.
+     * @return ArrayList
+     */
     public ArrayList<Coordinate> getSpecifiedFieldsInRange(Coordinate center, MoveType moveType, UnitType content) {
 
         ArrayList<Coordinate> fields = new ArrayList<>();
@@ -136,11 +182,20 @@ public class Board implements Serializable {
         return fields;
     }
 
+    /**
+     * Egy kapott koordinanta alapjan vissazter a tabla egy mezojevel.
+     * @param coordinate A koordinata, ami alapjan visszater a metovel.
+     * @return Field
+     */
     public Field getField( Coordinate coordinate){
 
         return GameBoard[coordinate.y][coordinate.x];
     }
 
+    /**
+     * A "moves" lista legutoso lepeset verehajto szinnel ter vissza.
+     * @return UnitType
+     */
     public UnitType getPreviousPlayer() {
 
         if(moves.isEmpty())
@@ -149,6 +204,11 @@ public class Board implements Serializable {
         return getField(moves.get(moves.size() - 1).to).getContent();
     }
 
+    /**
+     * Ellenorzi, hogy van-e vegrehajthato lepes a tablan.
+     * Meghiv ra egy AI-t, ami Exception-t dob, ha nincs.
+     * @return Boolean
+     */
     public Boolean testForEnd() {
 
         AI tester = new AI(getPreviousPlayer().getOpposite(), this, 1);
@@ -159,6 +219,10 @@ public class Board implements Serializable {
         return false;
     }
 
+    /**
+     * A tablan osszegzi a mezok erteket.
+     * @return int
+     */
     public int getValue() {
 
         int value = 0;
@@ -168,6 +232,38 @@ public class Board implements Serializable {
         return value;
     }
 
+    /**
+     * Osszeszamolja a tablan talalhato piros bogyokat.
+     * @return int
+     */
+    public int getRedCount(){
+
+        int count = 0;
+        for(Coordinate c : usefulCoordinates)
+            if(getField(c).content.equals(UnitType.RED))
+                count++;
+
+        return count;
+    }
+
+    /**
+     * Osszeszamolja a tablan talalhato kek bogyokat.
+     * @return int
+     */
+    public int getBlueCount(){
+
+        int count = 0;
+        for(Coordinate c : usefulCoordinates)
+            if(getField(c).content.equals(UnitType.BLUE))
+                count++;
+
+        return count;
+    }
+
+    /**
+     * Az osszegzett ertek alapjan visszater a nyertes szinevel.
+     * @return UnitType
+     */
     public UnitType getWinner() {
 
         int winner = getValue();
@@ -238,6 +334,9 @@ public class Board implements Serializable {
         return board;
     }
 
+    /**
+     * Kiirja a konzolra a lepesek listajat.
+     */
     public void listMoves(){
 
         moves.forEach(i -> System.out.println(i.toString()));

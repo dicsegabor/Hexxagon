@@ -4,6 +4,9 @@ import Controls.Board;
 
 import java.io.*;
 
+/**
+ * A tabla kimenteset es beolvasasat kezeli.
+ */
 public class BoardIOHandler {
 
     public static void save(Board board, String fileName){

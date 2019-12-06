@@ -16,6 +16,12 @@ public class Coordinate implements Serializable {
         this.y = y;
     }
 
+    /**
+     * Viszater a kapott koordinata es sajat maganak a tavolsagaval.
+     * Mivel a tablankban nem siman hasznaljuk a 2d-s tombot, ezert kicsit furak a szabalyok.
+     * @param c A koordinata, amitol szaitja a taolsagot.
+     * @return MoveType
+     */
     public MoveType getDistance(Coordinate c){
 
         int xDist = Math.abs(this.x - c.x);
@@ -34,11 +40,22 @@ public class Coordinate implements Serializable {
             return MoveType.INVALID;
     }
 
+    /**
+     * Megadja, hogy a koordinata a kapott koordinatak kozott talahato-e.
+     * @param leftUpper Az intervallum bal felso sarka.
+     * @param rightLover Az intervallum jobb also sarka.
+     * @return Boolean
+     */
     public Boolean isBetween(Coordinate leftUpper, Coordinate rightLover){
 
         return x >= leftUpper.x && y <= leftUpper.y && x <= rightLover.x && y >= rightLover.y;
     }
 
+    /**
+     * Kapott koordinatabol, az 1920x1080-as felbontasnak megfelelo pontot csinal.
+     * @param c A koordinata, amit pontta alakit.
+     * @return Point2D
+     */
     public static Point2D coordinateToPoint(Coordinate c){
 
         double x = 49 + c.x * 178;
